@@ -31,22 +31,6 @@ def map_estimate(posteriors):
     return max(posteriors, key=posteriors.get)
 
 
-def simulate(priors, likelihoods, n=1_000_000, seed=42):
-    """몬테카를로 시뮬레이션: 구매자 중 플랫폼별 비율"""
-    rng = random.Random(seed)
-    platforms = list(priors)
-    weights = [priors[p] for p in platforms]
-    visitors = rng.choices(platforms, weights=weights, k=n)
-
-    buyer_counts = {p: 0 for p in platforms}
-    for platform in visitors:
-        if rng.random() < likelihoods[platform]:
-            buyer_counts[platform] += 1
-
-    total_buyers = sum(buyer_counts.values())
-    return {p: c / total_buyers for p, c in buyer_counts.items()}, total_buyers
-
-
 def main():
     priors = {"PC": 0.1, "모바일 앱": 0.6, "모바일 웹": 0.3}
     likelihoods = {"PC": 0.8, "모바일 앱": 0.2, "모바일 웹": 0.5}
