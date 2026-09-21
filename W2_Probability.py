@@ -4,17 +4,17 @@ def validate_priors(priors):
         raise ValueError(f"사전확률의 합이 1이 아닙니다: {total}")
 
 
-def joint_probabilities(priors, likelihoods):
+def joint_probabilities(priors, likelihoods):  # ppt 10페이지 참고
     """곱셈법칙 P(A ∩ B) =  P(A | B) * P(B) = P(A) * P(B | A) """
     return {k: priors[k] * likelihoods[k] for k in priors}
 
 
-def total_probability(joint):
+def total_probability(joint):  # ppt 14페이지 참고
     """전체확률 P(B) = Σ P(B | A) * P(A) = Σ P(A ∩ B)"""
     return sum(joint.values())
 
 
-def posterior_probabilities(priors, likelihoods):
+def posterior_probabilities(priors, likelihoods):  # ppt 11, 15페이지 참고
     """베이즈 정리 P(A | B) = P(A ∩ B) / P(B)"""
     validate_priors(priors)
     joint = joint_probabilities(priors, likelihoods)
@@ -22,8 +22,8 @@ def posterior_probabilities(priors, likelihoods):
     return {k: v / p_b for k, v in joint.items()}
 
 
-def map_estimate(posteriors):
-    """사후확률이 가장 큰 플랫폼 (MAP 추정)"""
+def max_estimate(posteriors):
+    """사후확률이 가장 큰 플랫폼"""
     return max(posteriors, key=posteriors.get)
 
 
@@ -46,7 +46,7 @@ def main():
     print(f"전체 구매 확률 P(B) = {p_b:.4f}")
     print(f"사후확률 합계       = {sum(posteriors.values()):.4f}")
 
-    best = map_estimate(posteriors)
+    best = max_estimate(posteriors)
     print(f"\n▶ 결론: 구매자는 '{best}' 사용자였을 확률이 가장 높다 (약 {posteriors[best]:.2%})")
 
 
