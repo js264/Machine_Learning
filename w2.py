@@ -4,9 +4,11 @@ def validate_priors(priors):
         raise ValueError(f"사전확률의 합이 1이 아닙니다: {total}")
 
 
+
 def joint_probabilities(priors, likelihoods):  # ppt 10페이지 참고
     """곱셈법칙 P(A ∩ B) =  P(A | B) * P(B) = P(A) * P(B | A) """
     return {k: priors[k] * likelihoods[k] for k in priors}
+
 
 
 def total_probability(joint):  # ppt 14페이지 참고
@@ -14,12 +16,13 @@ def total_probability(joint):  # ppt 14페이지 참고
     return sum(joint.values())
 
 
-def posterior_probabilities(priors, likelihoods):  # ppt 11, 15페이지 참고
+
+def posterior_probabilities(joint, p_b):  # ppt 11, 15페이지 참고
     """베이즈 정리 P(A | B) = P(A ∩ B) / P(B)"""
-    validate_priors(priors)
-    joint = joint_probabilities(priors, likelihoods)
-    p_b = total_probability(joint)
+    if p_b == 0:
+        raise ValueError("P(B)가 0이므로 사후확률을 계산할 수 없습니다.")
     return {k: v / p_b for k, v in joint.items()}
+
 
 
 def max_estimate(posteriors):
@@ -27,13 +30,15 @@ def max_estimate(posteriors):
     return max(posteriors, key=posteriors.get)
 
 
+
 def main():
     priors = {"PC": 0.1, "App": 0.6, "Web": 0.3}
     likelihoods = {"PC": 0.8, "App": 0.2, "Web": 0.5}
 
+    validate_priors(priors)
     joint = joint_probabilities(priors, likelihoods)
     p_b = total_probability(joint)
-    posteriors = posterior_probabilities(priors, likelihoods)
+    posteriors = posterior_probabilities(joint, p_b)
 
     print("=" * 50)
     print(" 베이즈 정리: P(플랫폼 | 구매)")
@@ -48,6 +53,7 @@ def main():
 
     best = max_estimate(posteriors)
     print(f"\n▶ 결론: 구매자는 '{best}' 사용자였을 확률이 가장 높다 (약 {posteriors[best]:.2%})")
+
 
 
 if __name__ == "__main__":
