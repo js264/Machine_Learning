@@ -154,11 +154,6 @@ def main():
     print("\n[2] 정규화된 고유벡터")
     print(f"    λ1 = {lam1:.0f} → v1 = {fmt_vector(v1)}, ‖v1‖ = {norm(v1):.4f}")
     print(f"    λ2 = {lam2:.0f} → v2 = {fmt_vector(v2)}, ‖v2‖ = {norm(v2):.4f}")
-    # 검산: Av 의 각 원소 = A의 행과 v의 내적 (ppt 11페이지)
-    Av1 = [dot(A[0], v1), dot(A[1], v1)]
-    Av2 = [dot(A[0], v2), dot(A[1], v2)]
-    print(f"    검산 Av1 = {fmt_vector(Av1)} = {lam1:.0f}·v1")
-    print(f"    검산 Av2 = {fmt_vector(Av2)} = {lam2:.0f}·v2")
 
     # 3. 직교 확인
     d = dot(v1, v2)
