@@ -1,45 +1,9 @@
 import math
 
-
 EPS = 1e-9
 
 
-
-def transpose(M):  # ppt 12페이지 참고
-    """전치 (M^T)_ij = M_ji"""
-    return [list(row) for row in zip(*M)]
-
-
-
-def mat_mul(A, B):  # ppt 13페이지 참고
-    """행렬 곱 c_ij = Σ a_ik * b_kj"""
-    if len(A[0]) != len(B):
-        raise ValueError("안쪽 차원이 같지 않아 곱할 수 없습니다.")
-    Bt = transpose(B)
-    return [[dot(row, col) for col in Bt] for row in A]
-
-
-
-def dot(u, v):  # ppt 24~25페이지 참고
-    """내적 u·v = Σ u_i * v_i"""
-    return sum(a * b for a, b in zip(u, v))
-
-
-
-def norm(v):  # ppt 20페이지 참고
-    """L2 노름 ‖v‖ = √(Σ v_i²)"""
-    return math.sqrt(dot(v, v))
-
-
-
-def normalize(v):
-    """길이가 1이 되도록 정규화 v / ‖v‖"""
-    n = norm(v)
-    if n == 0:
-        raise ValueError("영벡터는 정규화할 수 없습니다.")
-    return [x / n for x in v]
-
-
+# ===== [1] 고윳값 =====
 
 def det_2x2(M):  # ppt 15페이지 참고
     """행렬식 det = ad − bc"""
@@ -58,6 +22,8 @@ def eigenvalues_2x2(A):  # ppt 40~41페이지 참고
 
 
 
+# ===== [2] 고유벡터 + 정규화 =====
+
 def eigenvector_2x2(A, lam):  # ppt 42페이지 참고
     """(A − λI)v = 0 의 해 중 0이 아닌 벡터"""
     (a, b), (c, d) = A
@@ -71,6 +37,37 @@ def eigenvector_2x2(A, lam):  # ppt 42페이지 참고
 
 
 
+def norm(v):  # ppt 20페이지 참고
+    """L2 노름 ‖v‖ = √(Σ v_i²)"""
+    return math.sqrt(dot(v, v))
+
+
+
+def normalize(v):
+    """길이가 1이 되도록 정규화 v / ‖v‖"""
+    n = norm(v)
+    if n == 0:
+        raise ValueError("영벡터는 정규화할 수 없습니다.")
+    return [x / n for x in v]
+
+
+
+# ===== [3] 직교 확인 =====
+
+def dot(u, v):  # ppt 24~25페이지 참고
+    """내적 u·v = Σ u_i * v_i"""
+    return sum(a * b for a, b in zip(u, v))
+
+
+
+# ===== [4] 정렬 변환 행렬 =====
+
+def transpose(M):  # ppt 12페이지 참고
+    """전치 (M^T)_ij = M_ji"""
+    return [list(row) for row in zip(*M)]
+
+
+
 def alignment_matrix(v1, v2):  # ppt 14, 37페이지 참고
     """고유벡터를 열로 쌓은 Q 를 만들고, x·y축 정렬 변환 T = Q^-1 = Q^T 반환"""
     Q = transpose([v1, v2])
@@ -80,6 +77,8 @@ def alignment_matrix(v1, v2):  # ppt 14, 37페이지 참고
     return transpose(Q)
 
 
+
+# ===== [5] 변환 종류 + 회전 각도 =====
 
 def is_identity(M):
     return all(math.isclose(M[i][j], 1.0 if i == j else 0.0, abs_tol=EPS)
@@ -100,6 +99,19 @@ def classify(T):  # ppt 30~34페이지 참고
     return "기타 선형 변환", None
 
 
+
+# ===== [6] 정렬된 새 행렬 T·A·T^T =====
+
+def mat_mul(A, B):  # ppt 13페이지 참고
+    """행렬 곱 c_ij = Σ a_ik * b_kj"""
+    if len(A[0]) != len(B):
+        raise ValueError("안쪽 차원이 같지 않아 곱할 수 없습니다.")
+    Bt = transpose(B)
+    return [[dot(row, col) for col in Bt] for row in A]
+
+
+
+# ===== 출력 보조 =====
 
 def fmt_matrix(M, indent="    "):
     return "\n".join(indent + "[" + ", ".join(f"{x:8.4f}" for x in row) + "]" for row in M)
